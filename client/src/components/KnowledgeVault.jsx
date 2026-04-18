@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Trash2, Clock, CheckCircle2, AlertCircle, Loader2, Database } from 'lucide-react';
 
@@ -15,7 +15,7 @@ const KnowledgeVault = () => {
   const fetchDocuments = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/api/upload');
+      const res = await api.get('/upload');
       setDocuments(res.data);
     } catch (err) {
       setError('Failed to fetch neural storage records');
@@ -27,7 +27,7 @@ const KnowledgeVault = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('Purge this data segment from neural storage? This cannot be undone.')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/upload/${id}`);
+      await api.delete(`/upload/${id}`);
       fetchDocuments();
     } catch (err) {
       console.error('Delete Error:', err);

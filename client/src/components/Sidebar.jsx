@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Plus, LogOut, Trash2, Shield, Zap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../api/axios';
 
 const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHistory }) => {
   const { user, logout } = useAuth();
@@ -11,7 +11,7 @@ const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHist
     e.stopPropagation();
     if (!window.confirm('Erase this knowledge timeline?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/chat/${id}`);
+      await api.delete(`/chat/${id}`);
       onRefreshHistory();
     } catch (err) {
       console.error('Delete Error:', err);

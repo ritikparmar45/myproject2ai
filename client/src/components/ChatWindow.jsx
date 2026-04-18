@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, User, Bot, Loader2, FileText, Paperclip, Database } from 'lucide-react';
 
@@ -29,7 +29,7 @@ const ChatWindow = ({ activeChatId, activeChat, onMessageSent }) => {
     formData.append('file', file);
 
     try {
-      await axios.post('http://localhost:5000/api/upload', formData, {
+      await api.post('/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       // Optionally notify user or refresh something
@@ -51,7 +51,7 @@ const ChatWindow = ({ activeChatId, activeChat, onMessageSent }) => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/chat', {
+      const res = await api.post('/chat', {
         message: userMessage,
         chatId: activeChatId
       });

@@ -21,65 +21,25 @@ Antigravity RAG is a premium, full-stack **Retrieval-Augmented Generation** plat
 - **Database**: MongoDB Atlas (Vector Search).
 - **AI Engine**: Groq API (Llama 3.3), Google Generative AI (Embeddings).
 
-## 🛠️ Getting Started
+## 🚀 Deployment Guide
 
-### Prerequisites
-- Node.js (v18+)
-- MongoDB Atlas account with Vector Search enabled.
-- API Keys for **Groq** and **Google Generative AI**.
+### Phase 1: Backend (Render.com)
+1.  **New Web Service**: Connect your GitHub repo.
+2.  **Settings**:
+    *   **Root Directory**: `server`
+    *   **Build Command**: `npm install`
+    *   **Start Command**: `npm start`
+3.  **Environment Variables**: Add all keys from `server/.env`.
+4.  **Copy URL**: Once deployed, copy your Render URL (e.g., `https://api.your app.com`).
 
-### Installation
-
-1. **Clone the repository**:
-   ```bash
-   git clone <your-repo-url>
-   cd project2
-   ```
-
-2. **Setup Server**:
-   ```bash
-   cd server
-   npm install
-   # Create a .env file based on .env.example
-   npm run dev
-   ```
-
-3. **Setup Client**:
-   ```bash
-   cd ../client
-   npm install
-   npm run dev
-   ```
-
-### 🗝️ Environment Variables
-Create a `.env` file in the `server` directory:
-```env
-PORT=5000
-MONGO_URI=your_mongodb_atlas_uri
-DB_NAME=rag_app
-JWT_SECRET=your_jwt_secret
-GROQ_API_KEY=your_groq_key
-GOOGLE_API_KEY=your_google_key
-```
-
-## 📂 Project Structure
-```
-├── client/           # React frontend (Vite)
-├── server/           # Express backend
-│   ├── controllers/  # Logic handlers
-│   ├── models/       # Mongoose schemas
-│   ├── rag/          # RAG pipeline (embed + query)
-│   └── routes/       # API endpoints
-└── README.md
-```
-
-## 🛡️ Security
-- **JWT Authentication**: Secure user sessions.
-- **Protected Routes**: Only authorized users can access the dashboard and knowledge vault.
-- **Bcrypt**: Industrial-strength password hashing.
-
-## 📄 License
-This project is licensed under the MIT License.
+### Phase 2: Frontend (Vercel.com)
+1.  **New Project**: Import your GitHub repo.
+2.  **Settings**:
+    *   **Root Directory**: `client`
+    *   **Framework Preset**: Vite
+3.  **Environment Variables**:
+    *   Add `VITE_API_URL`: `https://your-render-url/api` (Important: add `/api` at the end).
+4.  **Deploy**: Click deploy and wait for the magic.
 
 ---
 *Created by the Antigravity Team*

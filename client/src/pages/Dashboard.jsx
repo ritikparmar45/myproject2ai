@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import Sidebar from '../components/Sidebar';
 import ChatWindow from '../components/ChatWindow';
 import FileUpload from '../components/FileUpload';
@@ -26,7 +26,7 @@ const Dashboard = () => {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/chat/history');
+      const res = await api.get('/chat/history');
       setHistory(res.data);
       if (res.data.length > 0 && !activeChatId) {
         setActiveChatId(res.data[0]._id);
