@@ -35,18 +35,18 @@ const KnowledgeVault = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 sm:gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20">
-            <Database className="w-6 h-6 text-primary" />
+          <div className="w-10 h-10 lg:w-12 lg:h-12 bg-primary/10 rounded-xl lg:rounded-2xl flex items-center justify-center border border-primary/20 shrink-0">
+            <Database className="w-5 h-5 lg:w-6 lg:h-6 text-primary" />
           </div>
-          <div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">Knowledge Vault</h2>
-            <p className="text-slate-400 text-sm font-medium">Manage your indexed data segments</p>
+          <div className="text-center sm:text-left">
+            <h2 className="text-xl lg:text-2xl font-bold text-white tracking-tight">Vault</h2>
+            <p className="text-slate-400 text-[12px] lg:text-sm font-medium">Neural data segments</p>
           </div>
         </div>
-        <div className="px-4 py-2 bg-white/[0.03] border border-white/5 rounded-full text-[12px] font-bold text-slate-500 uppercase tracking-widest">
+        <div className="px-4 py-2 bg-white/[0.03] border border-white/5 rounded-full text-[10px] lg:text-[12px] font-bold text-slate-500 uppercase tracking-widest">
           {documents.length} Entities Indexed
         </div>
       </div>

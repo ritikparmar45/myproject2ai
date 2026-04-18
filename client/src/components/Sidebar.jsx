@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Plus, LogOut, Trash2, Shield, Zap } from 'lucide-react';
+import { MessageSquare, Plus, LogOut, Trash2, Shield, Zap, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
-const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHistory }) => {
+const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHistory, isOpen, onClose }) => {
   const { user, logout } = useAuth();
 
   const handleDelete = async (e, id) => {
@@ -19,16 +19,31 @@ const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHist
   };
 
   return (
-    <div className="w-80 h-full bg-[#020617]/80 backdrop-blur-2xl flex flex-col border-r border-white/5 relative z-20">
-      <div className="p-6">
+    <motion.div 
+      initial={false}
+      animate={{ 
+        x: typeof window !== 'undefined' && window.innerWidth < 1024 
+          ? (isOpen ? 0 : -320) 
+          : 0 
+      }}
+      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+      className={`fixed lg:relative inset-y-0 left-0 w-80 h-full bg-[#020617]/95 lg:bg-[#020617]/80 backdrop-blur-2xl flex flex-col border-r border-white/5 z-50 lg:z-20 transition-colors shadow-2xl lg:shadow-none`}
+    >
+      <div className="p-6 flex items-center justify-between gap-4">
         <button
           onClick={onNewChat}
-          className="w-full flex items-center justify-center gap-3 bg-primary/10 hover:bg-primary/20 text-primary rounded-2xl py-4 border border-primary/20 transition-all font-bold tracking-wide group"
+          className="flex-1 flex items-center justify-center gap-3 bg-primary/10 hover:bg-primary/20 text-primary rounded-2xl py-4 border border-primary/20 transition-all font-bold tracking-wide group"
         >
           <div className="p-1 bg-primary rounded-lg text-white group-hover:scale-110 transition-transform">
             <Plus className="w-4 h-4" />
           </div>
-          New Simulation
+          <span className="text-sm lg:text-base">New Simulation</span>
+        </button>
+        <button 
+          onClick={onClose}
+          className="p-3 bg-white/[0.03] border border-white/10 rounded-xl lg:hidden text-slate-400 hover:text-white"
+        >
+          <X className="w-5 h-5" />
         </button>
       </div>
 
@@ -37,7 +52,7 @@ const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHist
           <Zap className="w-3 h-3 text-primary" />
           Recent Timelines
         </div>
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="popLayout text-xs lg:text-sm">
           {history.map((chat) => (
             <motion.div
               layout
@@ -45,7 +60,10 @@ const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHist
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               key={chat._id}
-              onClick={() => onSelectChat(chat._id)}
+              onClick={() => {
+                onSelectChat(chat._id);
+                if (window.innerWidth < 1024) onClose();
+              }}
               className={`w-full text-left px-4 py-4 rounded-2xl flex items-center gap-4 transition-all group cursor-pointer relative overflow-hidden ${
                 activeChatId === chat._id 
                   ? 'bg-primary/10 text-white border border-primary/20 shadow-lg shadow-primary/5' 
@@ -81,15 +99,15 @@ const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHist
         <div className="bg-white/[0.03] border border-white/5 rounded-3xl p-4 mb-6 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 blur-3xl rounded-full"></div>
           <div className="flex items-center gap-4 relative z-10">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-purple-600 to-pink-600 flex items-center justify-center text-white font-black text-lg shadow-2xl shadow-primary/20 ring-1 ring-white/20">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-2xl bg-gradient-to-br from-primary via-purple-600 to-pink-600 flex items-center justify-center text-white font-black text-lg shadow-2xl shadow-primary/20 ring-1 ring-white/20">
               {user?.email?.[0]?.toUpperCase()}
             </div>
-            <div className="flex-1 truncate">
-              <div className="flex items-center gap-1.5">
+             <div className="flex-1 truncate max-w-[120px]">
+              <div className="flex items-center gap-1.5 ">
                 <p className="text-[14px] font-bold text-white truncate">{user?.email?.split('@')[0]}</p>
                 <Shield className="w-3 h-3 text-primary" />
               </div>
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Admin Operator</p>
+              <p className="text-[10px] lg:text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Admin</p>
             </div>
           </div>
         </div>
@@ -101,10 +119,11 @@ const Sidebar = ({ history, onNewChat, activeChatId, onSelectChat, onRefreshHist
           <div className="p-2 bg-white/[0.02] rounded-xl border border-white/5 group-hover:border-red-500/20">
             <LogOut className="w-4 h-4" />
           </div>
-          System Logout
+          <span className="hidden xs:inline">System Logout</span>
+          <span className="xs:hidden">Logout</span>
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
