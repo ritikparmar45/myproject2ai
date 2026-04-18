@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, User, Bot, Loader2, FileText, Paperclip, Database } from 'lucide-react';
+import { Send, User, Bot, Loader2, FileText, Paperclip, Database, MessageSquareCode } from 'lucide-react';
 
 const ChatWindow = ({ activeChatId, activeChat, onMessageSent }) => {
   const [input, setInput] = useState('');
@@ -32,7 +32,6 @@ const ChatWindow = ({ activeChatId, activeChat, onMessageSent }) => {
       await api.post('/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      // Optionally notify user or refresh something
     } catch (err) {
       console.error('Upload Error:', err);
       alert('Upload failed');
@@ -56,7 +55,6 @@ const ChatWindow = ({ activeChatId, activeChat, onMessageSent }) => {
         chatId: activeChatId
       });
       
-      // Simulate real-time thinking feel
       setTimeout(() => {
         onMessageSent(res.data);
       }, 500);
@@ -73,98 +71,129 @@ const ChatWindow = ({ activeChatId, activeChat, onMessageSent }) => {
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 sm:space-y-8 scroll-smooth"
       >
-        {activeChat?.messages.map((msg, idx) => (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: idx * 0.05 }}
-            key={idx}
-            className={`flex gap-3 sm:gap-6 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
-          >
-            <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-2xl relative group ${
-              msg.role === 'user' 
-                ? 'bg-gradient-to-br from-primary to-purple-600' 
-                : 'bg-white/5 border border-white/10'
-            }`}>
-              {msg.role === 'user' ? (
-                <User className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
-              ) : (
-                <>
-                  <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <Bot className="w-4 h-4 sm:w-6 sm:h-6 text-primary relative z-10" />
-                </>
-              )}
-            </div>
-            <div className={`max-w-[90%] sm:max-w-[85%] space-y-2 sm:space-y-3 ${msg.role === 'user' ? 'items-end text-right' : ''}`}>
-              <div className={`p-4 sm:p-5 rounded-2xl sm:rounded-3xl backdrop-blur-md ${
-                msg.role === 'user' 
-                  ? 'bg-primary/20 border border-primary/20 text-white rounded-tr-none' 
-                  : 'bg-white/[0.03] border border-white/10 text-slate-200 rounded-tl-none shadow-xl'
-              }`}>
-                <p className="whitespace-pre-wrap text-sm sm:text-[15px] leading-relaxed selection:bg-primary/30">{msg.content}</p>
-              </div>
-              
-              {msg.sources && msg.sources.length > 0 && (
-                <div className={`flex flex-wrap gap-2 pt-1 sm:pt-2 ${msg.role === 'user' ? 'justify-end' : ''}`}>
-                  <span className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 w-full mb-0.5 sm:mb-1 tracking-widest">Context</span>
-                  {msg.sources.map((source, sIdx) => (
-                    <motion.div 
-                      whileHover={{ scale: 1.05 }}
-                      key={sIdx} 
-                      className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-white/[0.03] border border-white/5 rounded-full text-[10px] sm:text-[11px] text-slate-400 hover:border-primary/30 hover:text-primary transition-all cursor-default"
-                    >
-                      <FileText className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
-                      <span className="truncate max-w-[100px] sm:max-w-none">{typeof source === 'object' ? source.filename : source}</span>
-                    </motion.div>
-                  ))}
+        {!activeChatId ? (
+          <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="w-16 h-16 lg:w-24 lg:h-24 bg-primary/10 rounded-[2.5rem] flex items-center justify-center mb-8 relative"
+            >
+              <div className="absolute inset-0 bg-primary/20 blur-3xl animate-pulse"></div>
+              <MessageSquareCode className="w-8 h-8 lg:w-12 lg:h-12 text-primary relative z-10" />
+            </motion.div>
+            <motion.h2 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="text-2xl lg:text-4xl font-black text-white tracking-tight uppercase italic mb-4"
+            >
+              Neural Interface Ready
+            </motion.h2>
+            <motion.p 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-slate-400 max-w-md mx-auto leading-relaxed font-medium text-sm lg:text-base mb-8"
+            >
+              Initialize a new simulation or access your existing knowledge timelines to begin data synthesis.
+            </motion.p>
+          </div>
+        ) : (
+          <>
+            {activeChat?.messages.map((msg, idx) => (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                key={idx}
+                className={`flex gap-3 sm:gap-6 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+              >
+                <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-2xl relative group ${
+                  msg.role === 'user' 
+                    ? 'bg-gradient-to-br from-primary to-purple-600' 
+                    : 'bg-white/5 border border-white/10'
+                }`}>
+                  {msg.role === 'user' ? (
+                    <User className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      <Bot className="w-4 h-4 sm:w-6 sm:h-6 text-primary relative z-10" />
+                    </>
+                  )}
                 </div>
-              )}
-            </div>
-          </motion.div>
-        ))}
-        {loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex gap-3 sm:gap-6"
-          >
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-              <Bot className="w-4 h-4 sm:w-6 sm:h-6 text-primary animate-pulse" />
-            </div>
-            <div className="bg-white/5 border border-white/10 p-4 sm:p-5 rounded-2xl sm:rounded-3xl rounded-tl-none flex items-center gap-3 sm:gap-4">
-              <div className="flex gap-1">
-                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
-              </div>
-              <span className="text-xs sm:text-sm font-medium text-slate-400">Processing...</span>
-            </div>
-          </motion.div>
-        )}
-        {uploading && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex gap-3 sm:gap-6"
-          >
-            <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
-              <Database className="w-4 h-4 sm:w-6 sm:h-6 text-primary animate-pulse" />
-            </div>
-            <div className="bg-white/5 border border-white/10 p-4 sm:p-5 rounded-2xl sm:rounded-3xl rounded-tl-none flex flex-col gap-2 sm:gap-3 min-w-[200px] sm:min-w-[300px]">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-[10px] sm:text-sm font-bold text-slate-200 uppercase tracking-widest italic">Ingestion...</span>
-                <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-primary" />
-              </div>
-              <div className="h-1 sm:h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="h-full bg-primary shadow-[0_0_15px_rgba(139,92,246,0.5)]"
-                ></motion.div>
-              </div>
-            </div>
-          </motion.div>
+                <div className={`max-w-[90%] sm:max-w-[85%] space-y-2 sm:space-y-3 ${msg.role === 'user' ? 'items-end text-right' : ''}`}>
+                  <div className={`p-4 sm:p-5 rounded-2xl sm:rounded-3xl backdrop-blur-md ${
+                    msg.role === 'user' 
+                      ? 'bg-primary/20 border border-primary/20 text-white rounded-tr-none' 
+                      : 'bg-white/[0.03] border border-white/10 text-slate-200 rounded-tl-none shadow-xl'
+                  }`}>
+                    <p className="whitespace-pre-wrap text-sm sm:text-[15px] leading-relaxed selection:bg-primary/30">{msg.content}</p>
+                  </div>
+                  
+                  {msg.sources && msg.sources.length > 0 && (
+                    <div className={`flex flex-wrap gap-2 pt-1 sm:pt-2 ${msg.role === 'user' ? 'justify-end' : ''}`}>
+                      <span className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 w-full mb-0.5 sm:mb-1 tracking-widest">Context</span>
+                      {msg.sources.map((source, sIdx) => (
+                        <motion.div 
+                          whileHover={{ scale: 1.05 }}
+                          key={sIdx} 
+                          className="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-white/[0.03] border border-white/5 rounded-full text-[10px] sm:text-[11px] text-slate-400 hover:border-primary/30 hover:text-primary transition-all cursor-default"
+                        >
+                          <FileText className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
+                          <span className="truncate max-w-[100px] sm:max-w-none">{typeof source === 'object' ? source.filename : source}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+            {loading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex gap-3 sm:gap-6"
+              >
+                <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                  <Bot className="w-4 h-4 sm:w-6 sm:h-6 text-primary animate-pulse" />
+                </div>
+                <div className="bg-white/5 border border-white/10 p-4 sm:p-5 rounded-2xl sm:rounded-3xl rounded-tl-none flex items-center gap-3 sm:gap-4">
+                  <div className="flex gap-1">
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></span>
+                  </div>
+                  <span className="text-xs sm:text-sm font-medium text-slate-400">Processing...</span>
+                </div>
+              </motion.div>
+            )}
+            {uploading && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex gap-3 sm:gap-6"
+              >
+                <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+                  <Database className="w-4 h-4 sm:w-6 sm:h-6 text-primary animate-pulse" />
+                </div>
+                <div className="bg-white/5 border border-white/10 p-4 sm:p-5 rounded-2xl sm:rounded-3xl rounded-tl-none flex flex-col gap-2 sm:gap-3 min-w-[200px] sm:min-w-[300px]">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-[10px] sm:text-sm font-bold text-slate-200 uppercase tracking-widest italic">Ingestion...</span>
+                    <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 animate-spin text-primary" />
+                  </div>
+                  <div className="h-1 sm:h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      className="h-full bg-primary shadow-[0_0_15px_rgba(139,92,246,0.5)]"
+                    ></motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </>
         )}
       </div>
 

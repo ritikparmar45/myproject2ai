@@ -3,7 +3,7 @@ import api from '../api/axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, Trash2, Clock, CheckCircle2, AlertCircle, Loader2, Database } from 'lucide-react';
 
-const KnowledgeVault = () => {
+const KnowledgeVault = ({ onDocumentSelect }) => {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -24,7 +24,8 @@ const KnowledgeVault = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
     if (!window.confirm('Purge this data segment from neural storage? This cannot be undone.')) return;
     try {
       await api.delete(`/upload/${id}`);
@@ -81,7 +82,8 @@ const KnowledgeVault = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 key={doc._id}
-                className="glass-subtle rounded-3xl p-6 flex items-center gap-5 group hover:border-primary/20 transition-all"
+                onClick={() => onDocumentSelect?.(doc)}
+                className="glass-subtle rounded-3xl p-6 flex items-center gap-5 group hover:border-primary/20 transition-all cursor-pointer active:scale-95"
               >
                 <div className="w-14 h-14 bg-white/[0.03] border border-white/5 rounded-2xl flex items-center justify-center relative shadow-inner">
                   <FileText className="w-6 h-6 text-primary" />
@@ -101,7 +103,7 @@ const KnowledgeVault = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleDelete(doc._id)}
+                  onClick={(e) => handleDelete(e, doc._id)}
                   className="p-3 bg-red-500/0 hover:bg-red-500/10 text-slate-600 hover:text-red-400 rounded-2xl transition-all"
                 >
                   <Trash2 className="w-5 h-5" />

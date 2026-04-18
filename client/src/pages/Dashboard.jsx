@@ -5,7 +5,7 @@ import ChatWindow from '../components/ChatWindow';
 import FileUpload from '../components/FileUpload';
 import KnowledgeVault from '../components/KnowledgeVault';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, MessageSquareCode, Database, X, Menu } from 'lucide-react';
+import { Brain, Database, X, Menu } from 'lucide-react';
 
 const Dashboard = () => {
   const [history, setHistory] = useState([]);
@@ -23,6 +23,8 @@ const Dashboard = () => {
       const chat = history.find(c => c._id === activeChatId);
       setActiveChat(chat);
       setIsSidebarOpen(false);
+    } else {
+      setActiveChat(null);
     }
   }, [activeChatId, history]);
 
@@ -49,6 +51,13 @@ const Dashboard = () => {
     setActiveChatId(null);
     setActiveChat(null);
     setIsSidebarOpen(false);
+    setShowVault(false);
+  };
+
+  const handleDocumentSelect = (doc) => {
+    // Close vault and start new simulation context
+    setShowVault(false);
+    handleNewChat();
   };
 
   return (
@@ -134,7 +143,10 @@ const Dashboard = () => {
                       <FileUpload onUploadSuccess={fetchHistory} /> 
                     </div>
                     <div className="lg:col-span-7">
-                      <KnowledgeVault key={history.length} />
+                      <KnowledgeVault 
+                        key={history.length} 
+                        onDocumentSelect={handleDocumentSelect}
+                      />
                     </div>
                   </div>
                 </div>
@@ -143,30 +155,11 @@ const Dashboard = () => {
           </AnimatePresence>
 
           <div className="flex-1 overflow-hidden">
-            {activeChatId ? (
-              <ChatWindow 
-                activeChatId={activeChatId} 
-                activeChat={activeChat}
-                onMessageSent={handleMessageSent}
-              />
-            ) : (
-              <div className="h-full flex flex-col items-center justify-center p-8 text-center bg-dark-darker/50">
-                <div className="w-16 h-16 lg:w-24 lg:h-24 bg-primary/10 rounded-[2.5rem] flex items-center justify-center mb-8 relative">
-                  <div className="absolute inset-0 bg-primary/20 blur-3xl animate-pulse"></div>
-                  <MessageSquareCode className="w-8 h-8 lg:w-12 lg:h-12 text-primary relative z-10" />
-                </div>
-                <h2 className="text-2xl lg:text-4xl font-black text-white tracking-tight uppercase italic mb-4">Neural Interface Ready</h2>
-                <p className="text-slate-400 max-w-md mx-auto leading-relaxed font-medium text-sm lg:text-base">
-                  Initialize a new simulation or access your existing knowledge timelines to begin data synthesis.
-                </p>
-                <button
-                  onClick={handleNewChat}
-                  className="mt-10 btn-primary"
-                >
-                  Start New Simulation
-                </button>
-              </div>
-            )}
+            <ChatWindow 
+              activeChatId={activeChatId} 
+              activeChat={activeChat}
+              onMessageSent={handleMessageSent}
+            />
           </div>
         </div>
       </main>
