@@ -143,7 +143,7 @@ const Dashboard = () => {
           </AnimatePresence>
 
           <div className="flex-1 overflow-hidden">
-            {activeChatId || activeChat || history.length > 0 ? (
+            {activeChatId ? (
               <ChatWindow 
                 activeChatId={activeChatId} 
                 activeChat={activeChat}
