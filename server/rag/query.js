@@ -19,26 +19,28 @@ const queryRAG = async (query, userId, attachedFiles) => {
     const vector = resultEmbed.embedding.values;
 
     // 2. Perform Vector Search via MongoDB Aggregation
-    const filterConditions = { "metadata.userId": userId.toString() };
-    if (attachedFiles && attachedFiles.length > 0) {
-      filterConditions["metadata.fileName"] = { "$in": attachedFiles };
-    }
-
+    // Note: Only metadata.userId is indexed as filter in Atlas vector index.
+    // metadata.fileName filtering is done in JS after vector search.
     const results = await collection.aggregate([
       {
         "$vectorSearch": {
           "index": "vector_index",
           "path": "embedding",
           "queryVector": vector,
-          "numCandidates": 100,
-          "limit": 15,
-          "filter": filterConditions
+          "numCandidates": 150,
+          "limit": 30,
+          "filter": { "metadata.userId": userId.toString() }
         }
       }
     ]).toArray();
 
-    const context = results.map(r => `[From file: ${r.metadata.fileName}]\n${r.text}`).join('\n\n---\n\n');
-    const sources = results.map(r => r.metadata.fileName);
+    // Post-filter by attached files (in JS, since metadata.fileName isn't indexed as filter)
+    const filteredResults = (attachedFiles && attachedFiles.length > 0)
+      ? results.filter(r => attachedFiles.includes(r.metadata.fileName))
+      : results;
+
+    const context = filteredResults.map(r => `[From file: ${r.metadata.fileName}]\n${r.text}`).join('\n\n---\n\n');
+    const sources = filteredResults.map(r => r.metadata.fileName);
 
     // 3. Generate Answer with Groq API (Llama 3) for speed and to avoid Gemini rate limits
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
