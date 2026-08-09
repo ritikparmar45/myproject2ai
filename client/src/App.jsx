@@ -8,14 +8,16 @@ import './index.css';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
+
   if (loading) return (
-    <div className="flex h-screen items-center justify-center bg-dark-darker galactic-mesh">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-        <p className="text-gray-400 font-medium animate-pulse">Initializing Neural Link...</p>
+    <div className="flex h-screen items-center justify-center app-bg">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-white/10 border-t-indigo-500 rounded-full animate-spin" />
+        <p className="text-sm text-[#8b8b9e] font-medium">Loading...</p>
       </div>
     </div>
   );
+
   if (!user) return <Navigate to="/login" />;
   return children;
 };
@@ -27,13 +29,13 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
-            } 
+            }
           />
         </Routes>
       </AuthProvider>

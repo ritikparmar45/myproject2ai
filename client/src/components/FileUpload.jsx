@@ -14,11 +14,8 @@ const FileUpload = ({ onUploadSuccess }) => {
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
+    else if (e.type === 'dragleave') setDragActive(false);
   };
 
   const handleDrop = (e) => {
@@ -31,22 +28,22 @@ const FileUpload = ({ onUploadSuccess }) => {
   };
 
   const validateAndSetFile = (selectedFile) => {
-    if (selectedFile.type !== "application/pdf") {
-      setError("Only PDF files are supported");
+    if (selectedFile.type !== 'application/pdf') {
+      setError('Only PDF files are supported.');
       return;
     }
     if (selectedFile.size > 10 * 1024 * 1024) {
-      setError("File size must be under 10MB");
+      setError('File size must be under 10 MB.');
       return;
     }
     setFile(selectedFile);
-    setError("");
+    setError('');
   };
 
   const clearFile = () => {
     setFile(null);
     setSuccess(false);
-    setError("");
+    setError('');
   };
 
   const handleUpload = async () => {
@@ -65,32 +62,34 @@ const FileUpload = ({ onUploadSuccess }) => {
         setFile(null);
         setSuccess(false);
         if (onUploadSuccess) onUploadSuccess();
-      }, 2000);
+      }, 1500);
     } catch (err) {
-      setError(err.response?.data?.message || 'Upload failed. Ensure Gemini SDK & MongoDB are configured.');
+      setError(err.response?.data?.message || 'Upload failed. Check your server configuration.');
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="w-full">
-      <AnimatePresence>
+    <div className="w-full space-y-3">
+      <AnimatePresence mode="wait">
         {!file ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            key="dropzone"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
             onDrop={handleDrop}
-            className={`cursor-pointer transition-all border-2 border-dashed rounded-3xl p-12 text-center flex flex-col items-center gap-6 group relative overflow-hidden ${
-              dragActive ? 'border-primary bg-primary/10' : 'border-white/5 hover:border-white/10 bg-white/[0.02]'
-            }`}
             onClick={() => inputRef.current.click()}
+            className={`cursor-pointer border-2 border-dashed rounded-xl p-8 text-center flex flex-col items-center gap-4 transition-all ${
+              dragActive
+                ? 'border-indigo-500/60 bg-indigo-500/5'
+                : 'border-white/[0.08] hover:border-white/[0.14] hover:bg-white/[0.02]'
+            }`}
           >
-            <div className="absolute inset-0 bg-primary/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <input
               ref={inputRef}
               type="file"
@@ -98,61 +97,66 @@ const FileUpload = ({ onUploadSuccess }) => {
               accept=".pdf"
               onChange={(e) => e.target.files[0] && validateAndSetFile(e.target.files[0])}
             />
-            <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center relative z-10 group-hover:scale-110 transition-transform">
-              <Upload className="w-10 h-10 text-primary" />
+            <div className={`w-11 h-11 rounded-lg flex items-center justify-center transition-colors ${
+              dragActive ? 'bg-indigo-500/20' : 'bg-white/[0.04]'
+            }`}>
+              <Upload className={`w-5 h-5 ${dragActive ? 'text-indigo-400' : 'text-[#8b8b9e]'}`} />
             </div>
-            <div className="relative z-10">
-              <p className="text-xl font-bold text-white tracking-tight">Ingest Neural Data</p>
-              <p className="text-sm text-slate-500 mt-2 font-medium">Drag-and-drop or select PDF segments for indexing</p>
+            <div>
+              <p className="text-sm font-medium text-[#c0c0d0]">
+                {dragActive ? 'Drop file here' : 'Drop PDF here or click to browse'}
+              </p>
+              <p className="text-xs text-[#4a4a5e] mt-1">Supports PDF files up to 10 MB</p>
             </div>
           </motion.div>
         ) : (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="glass-subtle rounded-3xl p-8 relative overflow-hidden"
+            key="file-preview"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="card p-4 relative"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl"></div>
             <button
               onClick={clearFile}
-              className="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
+              className="absolute top-3 right-3 p-1 rounded-md text-[#4a4a5e] hover:text-white hover:bg-white/5 transition-colors"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
-            <div className="flex items-center gap-6 relative z-10">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shadow-inner">
-                <FileText className="w-8 h-8 text-primary" />
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                <FileText className="w-5 h-5 text-indigo-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-lg font-bold text-white truncate">{file.name}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[11px] font-black uppercase text-slate-500 tracking-widest">{(file.size / 1024 / 1024).toFixed(2)} MB Segment</span>
-                  <span className="w-1 h-1 bg-slate-700 rounded-full"></span>
-                  <span className="text-[11px] font-black uppercase text-primary tracking-widest italic">Awaiting Indexing</span>
-                </div>
+                <p className="text-sm font-medium text-white truncate pr-6">{file.name}</p>
+                <p className="text-xs text-[#4a4a5e] mt-0.5">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
               </div>
-              {!success && (
+            </div>
+
+            <div className="mt-4 flex justify-end">
+              {!success ? (
                 <button
                   onClick={handleUpload}
                   disabled={uploading}
-                  className="btn-primary disabled:opacity-50 min-w-[160px] h-12 flex items-center justify-center gap-2"
+                  className="btn-primary text-sm"
+                  id="upload-document-btn"
                 >
                   {uploading ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span className="text-sm">Sythnesizing...</span>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Indexing...
                     </>
-                  ) : 'Commit to Vault'}
+                  ) : 'Index Document'}
                 </button>
-              )}
-              {success && (
-                <motion.div 
-                  initial={{ scale: 0.8, opacity: 0 }}
+              ) : (
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="flex items-center gap-3 text-emerald-400 font-bold bg-emerald-500/10 px-6 py-3 rounded-2xl border border-emerald-500/20"
+                  className="flex items-center gap-2 text-emerald-400 text-sm font-medium"
                 >
-                  <CheckCircle2 className="w-6 h-6" />
-                  <span className="text-sm uppercase tracking-widest">Indexed</span>
+                  <CheckCircle2 className="w-4 h-4" />
+                  Indexed successfully
                 </motion.div>
               )}
             </div>
@@ -162,11 +166,11 @@ const FileUpload = ({ onUploadSuccess }) => {
 
       {error && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 flex items-center gap-2 text-red-500 text-sm bg-red-500/10 p-3 rounded-xl border border-red-500/20"
+          className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
         >
-          <AlertCircle className="w-4 h-4" />
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </motion.div>
       )}

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
-import { LogIn, Mail, Lock, Loader2 } from 'lucide-react';
+import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -22,78 +22,115 @@ const LoginPage = () => {
       login(res.data.user, res.data.token);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-dark-darker galactic-mesh flex items-center justify-center p-4 relative overflow-hidden">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+    <div className="min-h-screen app-bg flex items-center justify-center p-4">
+      {/* Subtle grid background */}
+      <div
+        className="fixed inset-0 pointer-events-none opacity-[0.025]"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card w-full max-w-md p-10 relative z-10"
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+        className="w-full max-w-[420px] relative z-10"
       >
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-3xl mb-6 relative group">
-            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full group-hover:bg-primary/40 transition-all"></div>
-            <LogIn className="w-10 h-10 text-primary relative z-10" />
+        {/* Logo */}
+        <div className="mb-10 text-center">
+          <div className="inline-flex items-center gap-2.5 mb-6">
+            <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 3h4v4H3V3zm6 0h4v4H9V3zM3 9h4v4H3V9zm6 2h1v1H9v-1zm2 0h1v1h-1v-1zm0-2h1v1h-1V9zm2 2h1v1h-1v-1z" fill="white"/>
+              </svg>
+            </div>
+            <span className="text-[15px] font-semibold text-white tracking-tight">NexusAI</span>
           </div>
-          <h1 className="text-4xl font-bold text-white tracking-tight">Access Portal</h1>
-          <p className="text-slate-400 mt-3 font-medium">Synchronize with your knowledge base</p>
+          <h1 className="text-2xl font-semibold text-white mb-1.5">Welcome back</h1>
+          <p className="text-sm text-[#8b8b9e]">Sign in to your account to continue</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-xl text-sm">
-              {error}
+        {/* Card */}
+        <div className="card-elevated p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2.5 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+              >
+                <span className="w-1.5 h-1.5 bg-red-400 rounded-full shrink-0" />
+                {error}
+              </motion.div>
+            )}
+
+            <div className="space-y-1.5">
+              <label htmlFor="login-email" className="block text-sm font-medium text-[#c0c0d0]">
+                Email address
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a4a5e]" />
+                <input
+                  id="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input-field pl-10"
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
             </div>
-          )}
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-field w-full pl-11"
-                placeholder="name@example.com"
-                required
-              />
+            <div className="space-y-1.5">
+              <label htmlFor="login-password" className="block text-sm font-medium text-[#c0c0d0]">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a4a5e]" />
+                <input
+                  id="login-password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input-field pl-10"
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-field w-full pl-11"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-          </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-primary w-full mt-2"
+              id="login-submit-btn"
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  Sign in
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary w-full flex items-center justify-center gap-2"
-          >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
-          </button>
-        </form>
-
-        <p className="text-center mt-6 text-gray-400">
+        <p className="text-center mt-5 text-sm text-[#8b8b9e]">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-primary hover:text-primary-hover font-medium">
-            Create account
+          <Link to="/signup" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+            Create one
           </Link>
         </p>
       </motion.div>

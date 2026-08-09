@@ -4,6 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "npm --prefix client run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "start": "npm --prefix server run start",
+    "start:client": "npm --prefix client run dev",
+    "start:server": "npm --prefix server run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
