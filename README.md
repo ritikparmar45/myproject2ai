@@ -1,6 +1,6 @@
-# 🌌 Antigravity RAG Assistant v2.0
+# 🌌 AI RAG Assistant v2.0
 
-Antigravity RAG is a premium, full-stack **Retrieval-Augmented Generation** platform built with the MERN stack. It allows users to upload PDF documents, index them into a vector database, and perform high-speed neural queries using state-of-the-art LLMs.
+AI RAG Assistant is a premium, full-stack **Retrieval-Augmented Generation** platform built with the MERN stack. It allows users to upload PDF documents, index them into a vector database, and perform high-speed neural queries using state-of-the-art LLMs.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![React](https://img.shields.io/badge/React-19-blue)
@@ -42,4 +42,4 @@ Antigravity RAG is a premium, full-stack **Retrieval-Augmented Generation** plat
 4.  **Deploy**: Click deploy and wait for the magic.
 
 ---
-*Created by the Antigravity Team*
+*Created by the Development Team*
